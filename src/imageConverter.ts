@@ -4,8 +4,9 @@ import fs from 'fs'
 import sharp from 'sharp'
 
 import { FileInfo } from './types/FileInfo'
+import { ImageResizedOptions } from './types/Sharp'
 
-export const convertFilesToWebp = async (fileInfos: FileInfo[]) => {
+export const convertFilesToWebp = async (fileInfos: FileInfo[], resizeImageOptions: ImageResizedOptions) => {
   for (const fileInfo of fileInfos) {
     console.log(`${fileInfo.type}: ${fileInfo.fileAbsolutePath}`)
 
@@ -20,9 +21,12 @@ export const convertFilesToWebp = async (fileInfos: FileInfo[]) => {
     await sharp(fileInfo.fileAbsolutePath)
       .unflatten()
       .webp()
-      .resize(40, 40, {
-        fit: 'fill',
-      })
-      .toFile(newWebpFilePath, () => {})
+      .resize(
+        resizeImageOptions.width,
+        resizeImageOptions.height,
+        {
+          fit: resizeImageOptions.fit,
+        })
+      .toFile(newWebpFilePath, () => { })
   }
 }

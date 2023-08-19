@@ -6,6 +6,7 @@ import { pathConvertPosix } from './utils/pathUtils'
 import { getFilesInDirSync } from './fileFinder'
 import { convertFilesToWebp } from './imageConverter'
 import { FileInfo } from './types/FileInfo'
+import { ImageResizedOptions } from './types/Sharp'
 
 const readlineUserInput = readline.createInterface({
   input: process.stdin,
@@ -20,8 +21,9 @@ const logMatchingFiles = (foundFiles: FileInfo[]) => {
 export const app = async () => {
   const searchFilePath = path.join(os.homedir(), pathConvertPosix('temp'))
 
+  const imageFileName = 'image'
   const fileExt = 'svg'
-  const matchGlobExpression = `*image*.${fileExt}`
+  const matchGlobExpression = `*${imageFileName}*.${fileExt}`
 
   const fileInfos = getFilesInDirSync(searchFilePath, matchGlobExpression)
 
@@ -31,10 +33,16 @@ export const app = async () => {
 
   logMatchingFiles(fileInfos)
 
+  const resizeOptions: ImageResizedOptions = {
+    width: 40,
+    height: 40,
+    fit: 'fill',
+  }
+
   readlineUserInput.question(
     'Press enter to convert above files to Webp, or Ctrl+C to exit',
     () => {
-      convertFilesToWebp(fileInfos)
+      convertFilesToWebp(fileInfos, resizeOptions)
     },
   )
 }
